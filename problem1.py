@@ -40,22 +40,22 @@ def findanswer(process, differencetime, currentknown, time):
             return findanswer(process, differencetime, b"0", time0)
         else:
             return findanswer(process, differencetime, b"1", time1)
-    else:         
+    else:
+        if (len(currentknown) == 32):
+            newtime = sendtostrangebitcheck(currentknown, process)
+            return currentknown
         # Create our input to test the timing of.
-        print("\n"+ str(currentknown) +"\n")
+        print("\n"+ str(currentknown) + str(b"0"*(31-len(currentknown))) +"\n")
         # Test the timing
-        time0 = sendtostrangebitcheck(currentknown+b"0"+b"0"*(31-len(currentknown)), process)
-        time1 = sendtostrangebitcheck(currentknown+b"1"+b"0"*(31-len(currentknown)), process)
-        if (time0 > 0 and time1 > 0):
-            if time0 > time1:
-                return findanswer(process, differencetime, currentknown+b"0", time0)
+        newtime = sendtostrangebitcheck(currentknown+b"1"+b"0"*(31-len(currentknown)), process)
+        oldtimehigh = time + 0.15
+        if (newtime != -1):    
+            if (newtime > oldtimehigh):
+                return findanswer(process, differencetime, currentknown+b"1", newtime)
             else:
-                return findanswer(process, differencetime, currentknown+b"1", time1)
+                return findanswer(process, differencetime, currentknown+b"0", time)
         else:
-            if time0 < 0:
-                return currentknown+b"0"+b"0"*(31-len(currentknown))
-            else:
-                return currentknown+b"1"+b"0"*(31-len(currentknown))
+            return currentknown
 
 # Starting StrangeSystem
 beginCommand = '/home/reverbfortuna/Documents/cpts327 hw3/StrangeSystem'
