@@ -7,16 +7,16 @@ def sendtostrangebitcheck(input, process):
     process.clean()
     start = time()
     process.sendline(input)
-    output = process.recvuntil("ERROR: Verification failed!", False, timeout=60)
-    print((output[3279:]))
-    process.clean()
-    process.sendline(b"YES")
+    output = process.recvline_startswith("[***]", False, timeout=60)
+    print((output))
     end = time()
-    if output == '':
-        return -1
-    else:
+    if "ERROR" in str(output):
+        process.clean()
+        process.sendline(b"YES")
         print("\n" + str(end - start) + "\n")
         return end - start
+    else:
+        return -1
 
 # This code is going to be used to find time intervals for this process.
 # This can be found by checking two numbers, 00^(n-1) and 10^(n-1) where n is the length.
@@ -66,9 +66,10 @@ proc.sendline(b"11758263")
 proc.recvuntil("Enter your 32-bits PIN code (in binary form like PIN in pincode.log):")
 
 # Work goes here
-# interval = findintervalcorrect(proc)
+#interval = findintervalcorrect(proc)
 output = findanswer(proc, 0, b"", 0)
 print("\n\n" + str(output) + "\n\n")
+
 
 proc.interactive()
 
